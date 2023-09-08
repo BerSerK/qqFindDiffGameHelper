@@ -46,14 +46,20 @@ def screenshot():
     diff = cv2.absdiff(roi1, roi2)
     # 保存diff
     cv2.imwrite('diff1.png', diff)
-    # 将roi1差别值大于25的像素设置为红色
+    # 将roi1差别值大于25的像素设置为按像素红色与绿色间隔
     mask = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
     th = 25
     imask = mask > th
     canvas = np.zeros_like(roi1, np.uint8)
     canvas[imask] = (0, 0, 255)
-    roi1[imask] = (0, 0, 255)
-    
+    #分别取imask的奇数位和偶数位
+    imask1 = imask.copy()
+    imask1[::2] = False
+    imask2 = imask.copy()
+    imask2[1::2] = False
+    roi1[imask1] = (0, 255, 0)
+    roi1[imask2] = (0, 0, 255)
+
     # 放大两倍并保存
     roi1 = cv2.resize(roi1, (0, 0), fx=2, fy=2)
     cv2.imwrite('diff.png', roi1)
